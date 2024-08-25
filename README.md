@@ -1,4 +1,4 @@
-]This Swift project is a console-based application that combines four mini-games and utilities into a single program, navigable via a main menu. It offers an interactive experience with the following components:
+This Swift project is a console-based application that combines four mini-games and utilities into a single program, navigable via a main menu. It offers an interactive experience with the following components:
 
 To-Do List: Manage tasks by adding, viewing, marking as completed, or deleting them. Each task has a title and a status (completed/pending).
 
