@@ -47,7 +47,6 @@ class ToDoList {
 }
 
 // Guessing Game
-
 func playGuessingGame() {
     let targetNumber = Int.random(in: 1...100)
     var guess: Int? = nil
@@ -74,7 +73,6 @@ func playGuessingGame() {
 }
 
 // Quiz Game
-
 struct Question {
     let text: String
     let options: [String]
@@ -86,7 +84,7 @@ struct Question {
 }
 
 class QuizGame {
-    private var questions: [Question]
+     var questions: [Question]
     private var score: Int
     private(set) var currentQuestionIndex: Int
 
@@ -140,6 +138,87 @@ func createQuestions() -> [Question] {
     ]
 }
 
+// Tic-Tac-Toe Game
+class TicTacToe {
+    private var board: [[Character]]
+    private var currentPlayer: Character
+
+    init() {
+        board = Array(repeating: Array(repeating: " ", count: 3), count: 3)
+        currentPlayer = "X"
+    }
+
+    func drawBoard() {
+        print("\n-------------")
+        for row in board {
+            print("|", terminator: "")
+            for cell in row {
+                print(" \(cell) |", terminator: "")
+            }
+            print("\n-------------")
+        }
+    }
+
+    func playMove(row: Int, col: Int) -> Bool {
+        if row >= 0 && row < 3 && col >= 0 && col < 3 && board[row][col] == " " {
+            board[row][col] = currentPlayer
+            return true
+        } else {
+            print("Invalid move. Try again.")
+            return false
+        }
+    }
+
+    func checkWin() -> Bool {
+        for i in 0..<3 {
+            if board[i][0] == currentPlayer && board[i][1] == currentPlayer && board[i][2] == currentPlayer {
+                return true
+            }
+            if board[0][i] == currentPlayer && board[1][i] == currentPlayer && board[2][i] == currentPlayer {
+                return true
+            }
+        }
+        if board[0][0] == currentPlayer && board[1][1] == currentPlayer && board[2][2] == currentPlayer {
+            return true
+        }
+        if board[0][2] == currentPlayer && board[1][1] == currentPlayer && board[2][0] == currentPlayer {
+            return true
+        }
+        return false
+    }
+
+    func switchPlayer() {
+        currentPlayer = (currentPlayer == "X") ? "O" : "X"
+    }
+
+    func isBoardFull() -> Bool {
+        return !board.flatMap { $0 }.contains(" ")
+    }
+
+    func startGame() {
+        var moveCount = 0
+        while moveCount < 9 {
+            drawBoard()
+            print("Player \(currentPlayer), enter your move (row and column): ", terminator: "")
+            if let input = readLine(), let row = Int(input.split(separator: " ")[0]), let col = Int(input.split(separator: " ")[1]) {
+                if playMove(row: row, col: col) {
+                    moveCount += 1
+                    if checkWin() {
+                        drawBoard()
+                        print("Player \(currentPlayer) wins!")
+                        return
+                    }
+                    switchPlayer()
+                }
+            } else {
+                print("Invalid input. Please enter row and column numbers.")
+            }
+        }
+        drawBoard()
+        print("It's a draw!")
+    }
+}
+
 // Main Menu Function
 func showMenu() {
     print("""
@@ -147,7 +226,8 @@ func showMenu() {
     1. To-Do List
     2. Play Guessing Game
     3. Start Quiz
-    4. Exit
+    4. Play Tic-Tac-Toe
+    5. Exit
     """)
 }
 
@@ -155,6 +235,7 @@ func showMenu() {
 let toDoList = ToDoList()
 let questions = createQuestions()
 let quizGame = QuizGame(questions: questions)
+let ticTacToe = TicTacToe()
 var shouldContinue = true
 
 while shouldContinue {
@@ -213,15 +294,18 @@ while shouldContinue {
         case 3:
             quizGame.askQuestion()
             while quizGame.currentQuestionIndex < questions.count {
-                print("Enter your answer (1-\(questions[quizGame.currentQuestionIndex].options.count)):")
-                if let input = Int(readLine() ?? ""), input > 0, input <= questions[quizGame.currentQuestionIndex].options.count {
-                    quizGame.answerQuestion(with: input)
+                print("Enter your answer (1-\(quizGame.questions[quizGame.currentQuestionIndex].options.count)): ", terminator: "")
+                if let answer = Int(readLine() ?? ""), answer > 0 {
+                    quizGame.answerQuestion(with: answer)
                 } else {
-                    print("Invalid input. Please enter a number between 1 and \(questions[quizGame.currentQuestionIndex].options.count).")
+                    print("Invalid answer. Please enter a number between 1 and \(quizGame.questions[quizGame.currentQuestionIndex].options.count).")
                 }
             }
 
         case 4:
+            ticTacToe.startGame()
+
+        case 5:
             shouldContinue = false
 
         default:
